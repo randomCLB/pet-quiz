@@ -512,17 +512,23 @@
             document.getElementById('quiz').style.display = 'none';
             document.getElementById('result').style.display = 'block';
             
-            // 设置图片，添加错误处理
+            // 设置图片 - iOS Safari 兼容修复
             const img = document.getElementById('petImage');
-            img.style.opacity = '0';
-            img.onload = function() {
-                img.style.opacity = '1';
+            // 先显示占位背景，避免空白
+            img.style.background = '#f0f0f0';
+            img.style.opacity = '1';
+            
+            // 预加载图片
+            const preloadImg = new Image();
+            preloadImg.onload = function() {
+                img.src = pet.image;
+                img.style.background = 'transparent';
             };
-            img.onerror = function() {
+            preloadImg.onerror = function() {
                 console.error('图片加载失败:', pet.image);
-                img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="250" height="250"%3E%3Crect fill="%23f0f0f0" width="250" height="250"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999"%3E🐾%3C/text%3E%3C/svg%3E';
+                img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="250" height="250"%3E%3Crect fill="%23f0f0f0" width="250" height="250"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="80"%3E🐾%3C/text%3E%3C/svg%3E';
             };
-            img.src = pet.image;
+            preloadImg.src = pet.image;
             document.getElementById('petImage').alt = pet.name;
             document.getElementById('petName').textContent = pet.name;
             document.getElementById('petType').textContent = pet.type;
