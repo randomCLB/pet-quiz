@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你的命中注定宠物 - 趣味测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        /* 首页 */
+        .welcome {
+            padding: 60px 40px;
+            text-align: center;
+        }
+        
+        .welcome h1 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .welcome p {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .pets-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .pet-emoji {
+            font-size: 40px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 答题页面 */
+        .quiz {
+            padding: 40px;
+            display: none;
+        }
+        
+        .quiz-header {
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .question {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 18px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        /* 结果页面 */
+        .result {
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .pet-image {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #667eea;
+            margin: 20px auto;
+            display: block;
+            background: #f0f0f0;
+        }
+        
+        .pet-name {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .pet-type {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .pet-description {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .result-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .share-text {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #666;
+            word-break: break-all;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .welcome h1 { font-size: 26px; }
+            .question { font-size: 20px; }
+            .container { border-radius: 20px; }
+            .quiz, .welcome, .result { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页 -->
+        <div class="welcome fade-in" id="welcome">
+            <h1>🐾 你的命中注定宠物</h1>
+            <p>回答8个有趣的问题，发现最适合你的毛茸茸伙伴！<br>基于星座、血型、生肖等神秘算法...</p>
+            <div class="pets-showcase">
+                <span class="pet-emoji">🐱</span>
+                <span class="pet-emoji">🐶</span>
+                <span class="pet-emoji">🐱</span>
+                <span class="pet-emoji">🐶</span>
+                <span class="pet-emoji">🐱</span>
+            </div>
+            <p style="font-size: 14px; color: #999;">从20种热门宠物中为你匹配专属伴侣</p>
+            <button class="btn" onclick="startQuiz()">开始测试</button>
+        </div>
+        
+        <!-- 答题页面 -->
+        <div class="quiz" id="quiz">
+            <div class="quiz-header">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="question-number">问题 <span id="currentQ">1</span> / 8</div>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+        </div>
+        
+        <!-- 结果页面 -->
+        <div class="result fade-in" id="result">
+            <div class="result-badge">✨ 你的命中注定宠物</div>
+            <img class="pet-image" id="petImage" src="" alt="你的宠物">
+            <h2 class="pet-name" id="petName"></h2>
+            <p class="pet-type" id="petType"></p>
+            <div class="pet-description" id="petDescription"></div>
+            <div class="result-buttons">
+                <button class="btn" onclick="restart()">再测一次</button>
+                <button class="btn btn-secondary" onclick="copyResult()">复制结果</button>
+            </div>
+            <div class="share-text" id="shareText"></div>
+        </div>
+    </div>
+
+    <script>
+        // 题目数据
+        const questions = [
+            {
+                question: "你的星座是？",
+                options: ["白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座", "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"]
+            },
+            {
+                question: "你的血型是？",
+                options: ["A型", "B型", "AB型", "O型"]
+            },
+            {
+                question: "你的生肖是？",
+                options: ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"]
+            },
+            {
+                question: "你最喜欢的颜色是？",
+                options: ["热情的红色", "宁静的蓝色", "自然的绿色", "神秘的紫色", "温暖的黄色", "简约的黑白"]
+            },
+            {
+                question: "你属于哪种性格？",
+                options: ["外向活泼", "内向安静", "理性冷静", "感性浪漫"]
+            },
+            {
+                question: "你的生活习惯是？",
+                options: ["早起早睡养生派", "夜猫子熬夜党", "随性自由派", "规律作息强迫症"]
+            },
+            {
+                question: "你最喜欢的季节是？",
+                options: ["春暖花开", "夏日炎炎", "秋高气爽", "冬雪皑皑"]
+            },
+            {
+                question: "选择1-9中你最喜欢的数字",
+                options: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+            }
+        ];
+        
+        // 宠物数据库 - 10种猫 + 10种狗
+        const pets = [
+            // 猫咪 (0-9)
+            {
+                name: "布偶猫",
+                type: "🐱 优雅长毛猫",
+                image: "https://images.unsplash.com/photo-1513245543132-31f507417b26?w=400",
+                description: "布偶猫是猫界的仙女，性格温顺粘人，喜欢被抱在怀里。它们有着蓝宝石般的眼睛和丝滑的长毛，就像你的名字一样，是个温柔的陪伴者。适合喜欢安静、想要一个温暖抱枕的你！"
+            },
+            {
+                name: "英国短毛猫",
+                type: "🐱 圆润萌猫",
+                image: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400",
+                description: "英短是猫界的小胖子，圆圆的脸蛋和大眼睛让人忍不住想捏。性格独立又亲人，不吵不闹，是都市生活的完美伴侣。适合忙碌但想要一个安静伙伴的你！"
+            },
+            {
+                name: "美国短毛猫",
+                type: "🐱 活力短毛猫",
+                image: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=400",
+                description: "美短精力充沛，聪明好动，是猫界的运动健将。它们条纹分明，像小老虎一样帅气。适合喜欢互动、想要一个活泼玩伴的你！"
+            },
+            {
+                name: "暹罗猫",
+                type: "🐱 话痨贵族猫",
+                image: "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=400",
+                description: "暹罗猫是猫界的贵族，拥有迷人的蓝眼睛和重点色毛发。它们特别爱说话，会像小狗一样跟着你。适合喜欢交流、不怕被"唠叨"的你！"
+            },
+            {
+                name: "缅因猫",
+                type: "🐱 霸气大猫",
+                image: "https://images.unsplash.com/photo-1603123853880-a92fafb7809f?w=400",
+                description: "缅因猫是家猫中的巨无霸，但性格却像温柔的巨人。它们有着浓密的毛发和霸气的狮鬃，内心却是个撒娇鬼。适合喜欢大型宠物、有充足空间的你！"
+            },
+            {
+                name: "波斯猫",
+                type: "🐱 贵族长毛猫",
+                image: "https://images.unsplash.com/photo-1567270671170-fdc10a5bf831?w=400",
+                description: "波斯猫是猫界的皇室成员，扁平的小脸和长毛让它们看起来永远高贵冷艳。性格安静优雅，喜欢被宠爱。适合喜欢精致生活、愿意花时间梳毛的你！"
+            },
+            {
+                name: "苏格兰折耳猫",
+                type: "🐱 萌系折耳猫",
+                image: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400",
+                description: "折耳猫有着标志性的下垂小耳朵，看起来永远在卖萌。性格温和甜美，喜欢和人亲近。适合喜欢可爱事物、想要一个贴心小棉袄的你！"
+            },
+            {
+                name: "挪威森林猫",
+                type: "🐱 北欧神话猫",
+                image: "https://images.unsplash.com/photo-1602948313135-c8e87882e799?w=400",
+                description: "挪威森林猫是北欧神话中的精灵，有着厚实的防水毛发和强壮的身体。性格独立又聪明，像小探险家。适合喜欢自然、想要一个独特伙伴的你！"
+            },
+            {
+                name: "俄罗斯蓝猫",
+                type: "🐱 神秘短毛猫",
+                image: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=400",
+                description: "俄蓝有着银蓝色的短毛和翠绿色的眼睛，神秘又优雅。性格害羞但忠诚，对主人非常专一。适合喜欢神秘感、想要一个专属知己的你！"
+            },
+            {
+                name: "斯芬克斯猫",
+                type: "🐱 无毛外星猫",
+                image: "https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=400",
+                description: "斯芬克斯猫是猫界的外星人，没有毛发却充满魅力。它们皮肤温热，性格像小狗一样热情外向。适合喜欢独特、不怕"奇怪"外表的你！"
+            },
+            // 狗狗 (10-19)
+            {
+                name: "金毛寻回犬",
+                type: "🐶 阳光大暖男",
+                image: "https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400",
+                description: "金毛是狗界的大暖男，永远带着微笑，性格温顺友善。它们聪明易训练，对孩子特别好，是完美的家庭犬。适合喜欢户外活动、想要一个忠实伙伴的你！"
+            },
+            {
+                name: "拉布拉多",
+                type: "🐶 活泼吃货",
+                image: "https://images.unsplash.com/photo-1591769225440-811ad7d6eca6?w=400",
+                description: "拉布拉多精力充沛，爱吃爱玩，是狗界的开心果。它们聪明绝顶，常被训练成导盲犬和搜救犬。适合喜欢运动、想要一个活力四射伙伴的你！"
+            },
+            {
+                name: "柯基",
+                type: "🐶 短腿电臀",
+                image: "https://images.unsplash.com/photo-1612536057832-2ff7ead58194?w=400",
+                description: "柯基有着标志性的小短腿和大屁股，走起路来一扭一扭超可爱。性格倔强又聪明，是英女王的最爱。适合喜欢萌物、想要一个有个性伙伴的你！"
+            },
+            {
+                name: "柴犬",
+                type: "🐶 表情包大神",
+                image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400",
+                description: "柴犬是行走的表情包，有着治愈系的微笑和独立的性格。它们像猫一样爱干净，有时会有些固执。适合喜欢日本文化、想要一个有趣灵魂的你！"
+            },
+            {
+                name: "哈士奇",
+                type: "🐶 拆迁办主任",
+                image: "https://images.unsplash.com/photo-1605568427561-40dd23c2acea?w=400",
+                description: "哈士奇是狗界的颜值担当和二哈担当，蓝眼睛和狼一样的外表下藏着一颗逗比心。精力旺盛，爱说话（狼嚎）。适合有耐心、喜欢搞笑日常的你！"
+            },
+            {
+                name: "萨摩耶",
+                type: "🐶 微笑天使",
+                image: "https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=400",
+                description: "萨摩耶有着雪白的毛发和天使般的微笑，是狗界的颜值天花板。性格友善活泼，对谁都热情。适合喜欢美的事物、想要一个治愈系伙伴的你！"
+            },
+            {
+                name: "边境牧羊犬",
+                type: "🐶 智商天花板",
+                image: "https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?w=400",
+                description: "边牧是狗界的爱因斯坦，智商排名第一。它们需要大量运动和智力挑战，否则就会自己找事做（拆家）。适合喜欢训练、有大量时间的你！"
+            },
+            {
+                name: "法国斗牛犬",
+                type: "🐶 呆萌小猪",
+                image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
+                description: "法斗有着蝙蝠般的大耳朵和扁平的脸，看起来永远委屈巴巴。性格安静粘人，适合公寓生活。适合喜欢呆萌、想要一个安静伴侣的你！"
+            },
+            {
+                name: "泰迪",
+                type: "🐶 聪明卷毛",
+                image: "https://images.unsplash.com/photo-1591946614720-90a587da4a36?w=400",
+                description: "泰迪（贵宾犬）智商超高，不掉毛，像玩具熊一样可爱。它们粘人又聪明，是都市养狗的首选。适合喜欢聪明宠物、想要一个小型伙伴的你！"
+            },
+            {
+                name: "阿拉斯加雪橇犬",
+                type: "🐶 霸气大毛球",
+                image: "https://images.unsplash.com/photo-1560743641-3914f2c45636?w=400",
+                description: "阿拉斯加是大型犬中的温柔巨人，有着厚厚的毛发和狼一样的外表。性格稳重友好，对主人极其忠诚。适合有大房子、喜欢大型犬的你！"
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let answers = [];
+        
+        function startQuiz() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('quiz').classList.add('fade-in');
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('progress').style.width = ((currentQuestion + 1) / 8 * 100) + '%';
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(index);
+                optionsDiv.appendChild(btn);
+            });
+        }
+        
+        function selectAnswer(index) {
+            answers.push(index);
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        // 核心算法：将答案映射到宠物
+        function calculatePet() {
+            // 使用加权和 + 哈希确保同样的答案总是得到同样的结果
+            let hash = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                // 不同题目有不同的权重
+                const weights = [3, 2, 3, 1, 2, 1, 2, 1];
+                hash += answers[i] * weights[i];
+            }
+            
+            // 加上每个答案的平方（增加独特性）
+            for (let i = 0; i < answers.length; i++) {
+                hash += answers[i] * answers[i] * (i + 1);
+            }
+            
+            // 取模得到 0-19 的索引
+            return hash % 20;
+        }
+        
+        function showResult() {
+            const petIndex = calculatePet();
+            const pet = pets[petIndex];
+            
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            
+            document.getElementById('petImage').src = pet.image;
+            document.getElementById('petImage').alt = pet.name;
+            document.getElementById('petName').textContent = pet.name;
+            document.getElementById('petType').textContent = pet.type;
+            document.getElementById('petDescription').textContent = pet.description;
+            
+            // 生成分享文本
+            const shareText = `我的命中注定宠物是【${pet.name}】！快来测测你的：${window.location.href}`;
+            document.getElementById('shareText').textContent = '分享语：' + shareText;
+            
+            // 保存结果到 localStorage（可选）
+            localStorage.setItem('petResult', JSON.stringify({
+                petIndex: petIndex,
+                answers: answers,
+                date: new Date().toISOString()
+            }));
+        }
+        
+        function restart() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('welcome').style.display = 'block';
+            document.getElementById('welcome').classList.add('fade-in');
+        }
+        
+        function copyResult() {
+            const shareText = document.getElementById('shareText').textContent.replace('分享语：', '');
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('结果已复制到剪贴板！');
+            }).catch(() => {
+                // 降级方案
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('结果已复制！');
+            });
+        }
+        
+        // 页面加载时检查是否有之前的结果（可选功能）
+        window.onload = function() {
+            const saved = localStorage.getItem('petResult');
+            if (saved) {
+                const data = JSON.parse(saved);
+                console.log('之前测过：', pets[data.petIndex].name);
+            }
+        };
+    </script>
+</body>
+</html>
