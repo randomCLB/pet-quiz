@@ -518,17 +518,32 @@
             img.style.background = '#f0f0f0';
             img.style.opacity = '1';
             
-            // 预加载图片
-            const preloadImg = new Image();
-            preloadImg.onload = function() {
+            // 显示emoji占位图（图片暂缺）
+            const emojiMap = {
+                "布偶猫": "🐱", "英国短毛猫": "🐱", "美国短毛猫": "🐱", "暹罗猫": "🐱", "缅因猫": "🐱",
+                "波斯猫": "🐱", "苏格兰折耳猫": "🐱", "挪威森林猫": "🐱", "俄罗斯蓝猫": "🐱", "斯芬克斯猫": "🐱",
+                "金毛寻回犬": "🐶", "拉布拉多": "🐶", "柯基": "🐶", "柴犬": "🐶", "哈士奇": "🐶",
+                "萨摩耶": "🐶", "边境牧羊犬": "🐶", "法国斗牛犬": "🐶", "泰迪": "🐶", "阿拉斯加雪橇犬": "🐶"
+            };
+            
+            // 检查图片是否存在
+            const testImg = new Image();
+            testImg.onload = function() {
                 img.src = pet.image;
                 img.style.background = 'transparent';
             };
-            preloadImg.onerror = function() {
-                console.error('图片加载失败:', pet.image);
-                img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="250" height="250"%3E%3Crect fill="%23f0f0f0" width="250" height="250"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="80"%3E🐾%3C/text%3E%3C/svg%3E';
+            testImg.onerror = function() {
+                // 显示emoji占位
+                const emoji = emojiMap[pet.name] || '🐾';
+                img.src = 'data:image/svg+xml,' + encodeURIComponent(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250">' +
+                    '<rect fill="#f0f0f0" width="250" height="250"/>' +
+                    '<text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="100">' + emoji + '</text>' +
+                    '</svg>'
+                );
+                img.style.background = '#f0f0f0';
             };
-            preloadImg.src = pet.image;
+            testImg.src = pet.image;
             document.getElementById('petImage').alt = pet.name;
             document.getElementById('petName').textContent = pet.name;
             document.getElementById('petType').textContent = pet.type;
