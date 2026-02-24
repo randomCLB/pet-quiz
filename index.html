@@ -512,7 +512,30 @@
             document.getElementById('quiz').style.display = 'none';
             document.getElementById('result').style.display = 'block';
             
-            document.getElementById('petImage').src = pet.image;
+            // 根据宠物名称选择对应品种图片
+            const breedImages = {
+          "布偶猫": "https://images.unsplash.com/photo-1615266895738-11f1371cd7e5?w=400",
+          "英国短毛猫": "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400",
+          "美国短毛猫": "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=400",
+          "暹罗猫": "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=400",
+          "缅因猫": "https://images.unsplash.com/photo-1603123853880-a92fafb7809f?w=400",
+          "波斯猫": "https://images.unsplash.com/photo-1567270671170-fdc10a5bf831?w=400",
+          "苏格兰折耳猫": "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400",
+          "挪威森林猫": "https://images.unsplash.com/photo-1602948313135-c8e87882e799?w=400",
+          "俄罗斯蓝猫": "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=400",
+          "斯芬克斯猫": "https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=400",
+          "金毛寻回犬": "https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400",
+          "拉布拉多": "https://images.unsplash.com/photo-1591769225440-811ad7d6eca6?w=400",
+          "柯基": "https://images.unsplash.com/photo-1612536057832-2ff7ead58194?w=400",
+          "柴犬": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400",
+          "哈士奇": "https://images.unsplash.com/photo-1605568427561-40dd23c2acea?w=400",
+          "萨摩耶": "https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=400",
+          "边境牧羊犬": "https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?w=400",
+          "法国斗牛犬": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
+          "泰迪": "https://images.unsplash.com/photo-1591946614720-90a587da4a36?w=400",
+          "阿拉斯加雪橇犬": "https://images.unsplash.com/photo-1560743641-3914f2c45636?w=400"
+};
+            document.getElementById('petImage').src = breedImages[pet.name] || pet.image;
             document.getElementById('petImage').alt = pet.name;
             document.getElementById('petName').textContent = pet.name;
             document.getElementById('petType').textContent = pet.type;
